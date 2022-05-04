@@ -68,6 +68,21 @@ async function run() {
             const result = await itemsCollection.updateOne(query, updateRestockQuantity, options);
             res.send(result);
         });
+
+        // add new item
+        app.post('/additem', async(req, res) =>{
+            const newItem = req.body;
+            const result = await itemsCollection.insertOne(newItem);
+            res.send(result);
+        });
+
+        // delete an item
+        app.post('/items/:id', async(req, res) =>{
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await itemsCollection.deleteOne(query);
+            res.send(result);
+        });
     }
     finally {
 
