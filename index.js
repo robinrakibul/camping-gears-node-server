@@ -41,7 +41,19 @@ async function run() {
             res.send(itemSearch);
         });
         
-
+        // quantity reducing
+        app.put('/items/:id',async (req,res)=>{
+            const id = req.params.id;
+            const query={_id: ObjectId(id)};
+            const options = { upsert: true };
+            const updateQuantity = {
+                $set: {
+                    quantity: req.body.setQuantity,
+                },
+            };
+            const result = await itemsCollection.updateOne(query, updateQuantity, options);
+            res.send(result);
+        });
     }
     finally {
 
