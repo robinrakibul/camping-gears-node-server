@@ -54,6 +54,20 @@ async function run() {
             const result = await itemsCollection.updateOne(query, updateQuantity, options);
             res.send(result);
         });
+
+        // quantity restocking
+        app.put('/items/:id',async (req,res)=>{
+            const id = req.params.id;
+            const query={_id: ObjectId(id)};
+            const options = { upsert: true };
+            const updateRestockQuantity = {
+                $set: {
+                    quantity: req.body.restockQuantity,
+                },
+            };
+            const result = await itemsCollection.updateOne(query, updateRestockQuantity, options);
+            res.send(result);
+        });
     }
     finally {
 
