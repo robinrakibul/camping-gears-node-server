@@ -11,6 +11,19 @@ require('dotenv').config();
 app.use(cors());
 app.use(express.json());
 
+function verifyJWT(req, res, next){
+    const authHeader = req.headers.authorization;
+    if(!authHeader){
+        return res.status(401).send({message: 'Unauthorized Access!'})
+    }
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err,decoded)=>{
+        if(err){
+            return res.status(403).send({message: 'Forbidden access'});
+        }
+    })
+    next();
+}
 
 app.get('/', (req, res) => {
     res.send('Server is running')
@@ -98,7 +111,7 @@ async function run() {
         });
 
         // myitems app.get
-        app.get('/myitems', async(req, res) =>{
+        app.get('/myitems', verifyJWT, async(req, res) =>{
             const email = req.query.email;
             const query = {email: email}
             const cursor = itemsCollection.find(query);
